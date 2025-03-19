@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMAK BALANÇAS</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Página Inicial -->
+        <div id="homePage" class="page active">
+            <div class="background-container">
+                <div class="card">
+                    <h1>LUMAK PESO</h1>
+                    <div class="button-group">
+                        <button onclick="showPage('connectionPage')" class="btn">
+                            <span class="material-icons">link</span> Conectar
+                        </button>
+                        <button onclick="showPage('scalePage')" class="btn">
+                            <span class="material-icons">scale</span> Balança
+                        </button>
+                        <button onclick="showSettings()" class="btn">
+                            <span class="material-icons">settings</span> Configuração
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Página de Conexão -->
+        <div id="connectionPage" class="page">
+            <div class="card">
+                <h2>Conectar a Balança</h2>
+                <p id="statusText">Clique em 'Escanear' para encontrar dispositivos BLE.</p>
+                <select id="deviceSelect" disabled>
+                    <option value="">Selecione um dispositivo</option>
+                </select>
+                <div class="button-group">
+                    <button onclick="scanDevices()" class="btn">
+                        <span class="material-icons">search</span> Escanear
+                    </button>
+                    <button onclick="connectToDevice()" class="btn" id="connectBtn" disabled>
+                        <span class="material-icons">bluetooth_connected</span> Conectar
+                    </button>
+                    <button onclick="showPage('homePage')" class="btn">
+                        <span class="material-icons">arrow_back</span> Voltar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Página da Balança -->
+        <div id="scalePage" class="page">
+            <div class="card">
+                <h2>Dados da Balança</h2>
+                <div id="weightDisplay" class="weight-display">
+                    <span id="weightValue">Aguardando dados...</span>
+                </div>
+                <div id="savedData" class="saved-data"></div>
+                <input type="text" id="braceletInput" placeholder="Número do Brinco ou Nome do Animal" class="input-field">
+                <div class="button-group">
+                    <button onclick="saveData()" class="btn">
+                        <span class="material-icons">save</span> Salvar Dados
+                    </button>
+                    <button onclick="disconnect()" class="btn">
+                        <span class="material-icons">bluetooth_disabled</span> Desconectar
+                    </button>
+                </div>
+                <button onclick="showPage('homePage')" class="btn">
+                    <span class="material-icons">arrow_back</span> Voltar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de Status Bluetooth -->
+    <div id="bluetoothStatus" class="bluetooth-status">
+        <span class="material-icons">bluetooth</span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html> 
