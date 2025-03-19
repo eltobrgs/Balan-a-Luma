@@ -32,11 +32,10 @@ async function scanDevices() {
         deviceSelect.disabled = true;
         connectBtn.disabled = true;
 
+        // Modificado para aceitar qualquer dispositivo Bluetooth
         const devices = await navigator.bluetooth.requestDevice({
-            filters: [{
-                services: [SERVICE_UUID]
-            }],
-            optionalServices: [SERVICE_UUID]
+            acceptAllDevices: true,
+            optionalServices: [SERVICE_UUID] // Mantém o serviço como opcional
         });
 
         deviceSelect.disabled = false;
@@ -48,7 +47,7 @@ async function scanDevices() {
         connectBtn.disabled = false;
         bleDevice = devices;
 
-        statusText.textContent = '📡 Dispositivo encontrado. Clique em Conectar.';
+        statusText.textContent = '📡 Dispositivo encontrado: ' + (devices.name || 'Dispositivo Desconhecido');
     } catch (error) {
         console.error('Erro ao escanear:', error);
         statusText.textContent = '⚠️ Erro ao escanear dispositivos: ' + error.message;
@@ -61,14 +60,23 @@ async function connectToDevice() {
         connectBtn.disabled = true;
 
         bleServer = await bleDevice.gatt.connect();
-        const service = await bleServer.getPrimaryService(SERVICE_UUID);
-        bleCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+        
+        try {
+            // Tenta obter o serviço específico da balança
+            const service = await bleServer.getPrimaryService(SERVICE_UUID);
+            bleCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+            
+            // Configurar notificações
+            await bleCharacteristic.startNotifications();
+            bleCharacteristic.addEventListener('characteristicvaluechanged', handleWeightData);
+            
+            statusText.textContent = '✅ Conectado como balança!';
+        } catch (error) {
+            // Se não encontrar o serviço específico, ainda permite conectar
+            statusText.textContent = '✅ Conectado (não é uma balança LUMAK)';
+            console.log('Dispositivo conectado mas não é uma balança:', error);
+        }
 
-        // Configurar notificações
-        await bleCharacteristic.startNotifications();
-        bleCharacteristic.addEventListener('characteristicvaluechanged', handleWeightData);
-
-        statusText.textContent = '✅ Conectado!';
         bluetoothStatus.classList.add('connected');
         showPage('scalePage');
     } catch (error) {
